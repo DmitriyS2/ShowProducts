@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -65,6 +67,9 @@ class MainFragment : Fragment() {
         }
 
         viewModel.idForLoading.observe(viewLifecycleOwner) {
+            if (it == -1) {
+                return@observe
+            }
             binding.buttonPrev.isEnabled = it != 0
             Log.d("MyLog", "idForLoading observe=${it}")
             binding.textCounter.text =
@@ -72,15 +77,82 @@ class MainFragment : Fragment() {
             viewModel.loadData()
         }
 
-        viewModel.data.observe(viewLifecycleOwner) {
-            val lastProduct = it.getOrNull(viewModel.countForShowList)
-            binding.buttonNext.isEnabled = lastProduct != null
-            val newList: MutableList<Product> = it as MutableList<Product>
-            newList.remove(lastProduct)
-            //     adapter.submitList(it)
-            adapter.submitList(newList)
-            //    Log.d("MyLog", "data observe=${it}")
-            Log.d("MyLog", "lastProduct=${lastProduct}")
+//        viewModel.data.observe(viewLifecycleOwner) {
+//            val lastProduct = it?.getOrNull(viewModel.countForShowList)
+//            binding.buttonNext.isEnabled = lastProduct != null
+//            val newList: MutableList<Product> = it as MutableList<Product>
+//            newList.remove(lastProduct)
+//            //     adapter.submitList(it)
+//            adapter.submitList(newList)
+//            //    Log.d("MyLog", "data observe=${it}")
+//            Log.d("MyLog", "lastProduct=${lastProduct}")
+//        }
+
+        viewModel.dataModel.observe(viewLifecycleOwner) { model ->
+            model?.let {
+                binding.groupError.isVisible = model.error
+                binding.progress.isVisible = model.loading
+                binding.groupButtonPrevNext.isVisible = !model.error
+
+                val lastProduct = model.products?.getOrNull(viewModel.countForShowList)
+                binding.buttonNext.isEnabled = lastProduct != null
+                val newList: MutableList<Product> = model.products as MutableList<Product>
+                newList.remove(lastProduct)
+                //     adapter.submitList(it)
+                adapter.submitList(newList)
+                //    Log.d("MyLog", "data observe=${it}")
+                Log.d(
+                    "MyLog",
+                    "lastProduct=${lastProduct}, error=${model.error}, loading=${model.loading}, products.isEmpty=${model.products.isEmpty()}"
+                )
+            }
+        }
+
+        binding.buttonSearch.setOnClickListener {
+            viewModel.changeFlagSearch()
+        }
+
+        viewModel.flagSearch.observe(viewLifecycleOwner) {
+            it?.let { flag ->
+                when (flag) {
+                    true -> {
+                        binding.editSearch.isVisible = true
+                        binding.groupButtonPrevNext.visibility = View.GONE
+                        binding.buttonSearch.setImageResource(R.drawable.cancel_48)
+                        viewModel.changeIdForLoading(-1)
+                    }
+
+                    false -> {
+                        binding.editSearch.isVisible = false
+                        binding.groupButtonPrevNext.visibility = View.VISIBLE
+                        binding.buttonSearch.setImageResource(R.drawable.search_48)
+                        viewModel.changeIdForLoading(0)
+                    }
+                }
+            }
+        }
+
+        binding.editSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    viewModel.search(it)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+        })
+
+        binding.buttonRetry.setOnClickListener {
+            ObjectAnimator.ofPropertyValuesHolder(
+                binding.buttonRetry,
+                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
+            ).start()
+            viewModel.loadData()
         }
 
         return binding.root

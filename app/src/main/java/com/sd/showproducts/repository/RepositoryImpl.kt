@@ -10,19 +10,29 @@ class RepositoryImpl @Inject constructor(
     private val apiService: ApiService,
 ):Repository {
 
-    override suspend fun loadData(limit: Int, skip: Int): List<Product>? {
-
+    override suspend fun loadData(limit: Int, skip: Int): MutableList<Product>? {
         try{
             val response = apiService.loadData(limit, skip)
             if (!response.isSuccessful) {
-              //  throw ApiError(response.code(), response.message())
-                return null
+                return mutableListOf()
             }
             val body = response.body()
             return body?.products
-
         } catch (e:Exception){
-            return null
+            return mutableListOf()
+        }
+    }
+
+    override suspend fun search(newText: String): MutableList<Product>? {
+        try{
+            val response = apiService.getProductsFromSearch(newText)
+            if (!response.isSuccessful) {
+                return mutableListOf()
+            }
+            val body = response.body()
+            return body?.products
+        } catch (e:Exception){
+            return mutableListOf()
         }
     }
 

@@ -12,4 +12,10 @@ interface ApiService {
         @Query("limit") limit:Int,
         @Query("skip") skip:Int
     ):Response<Products>
+
+    @GET("products/search")
+    suspend fun getProductsFromSearch(
+        @Query("q") search:String
+    ):Response<Products>
+
 }

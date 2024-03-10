@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.sd.showproducts.R
@@ -27,10 +28,16 @@ class CurrentProductFragment : Fragment() {
 
         val currentId = arguments?.textArgument?.toInt() ?: 0
 
-        viewModel.data.observe(viewLifecycleOwner) { list ->
-            val product = list.find {
-                it.id == currentId
+        viewModel.dataModel.observe(viewLifecycleOwner) {model ->
+            val product = model.products?.find {
+                it.id==currentId
             }
+
+//        }
+//        viewModel.data.observe(viewLifecycleOwner) { list ->
+//            val product = list?.find {
+//                it.id == currentId
+//            }
             product?.let {
                 binding.apply {
                     category.text = it.category
@@ -49,6 +56,11 @@ class CurrentProductFragment : Fragment() {
                         .into(imageCurrent)
                 }
             }
+        }
+
+        binding.buttonBack.setOnClickListener {
+            findNavController()
+                .navigate(R.id.action_currentProductFragment_to_mainFragment)
         }
 
         return binding.root
