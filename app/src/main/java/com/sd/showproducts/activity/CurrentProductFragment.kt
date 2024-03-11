@@ -32,20 +32,14 @@ class CurrentProductFragment : Fragment() {
             val product = model.products?.find {
                 it.id==currentId
             }
-
-//        }
-//        viewModel.data.observe(viewLifecycleOwner) { list ->
-//            val product = list?.find {
-//                it.id == currentId
-//            }
             product?.let {
                 binding.apply {
                     category.text = it.category
                     titleCurrent.text = it.title
-                    brandCurrent.text = it.brand
-                    priceCurrent.text = "Цена: $" + it.price.toString()
+                    brandCurrent.text = getString(R.string.brand, it.brand)
+                    priceCurrent.text = getString(R.string.cost, it.price.toString())
                     descriptionCurrent.text = it.description
-                    stockCurrent.text = "Есть на складе: " + it.stock
+                    stockCurrent.text = getString(R.string.stock, it.stock)
 
                     Glide.with(imageCurrent)
                         .load(it.thumbnail)
@@ -68,8 +62,5 @@ class CurrentProductFragment : Fragment() {
 
     companion object {
         var Bundle.textArgument: String? by StringArg
-
-        @JvmStatic
-        fun newInstance() = CurrentProductFragment()
     }
 }

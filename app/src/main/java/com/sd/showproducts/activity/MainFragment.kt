@@ -51,9 +51,9 @@ class MainFragment : Fragment() {
                 PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
                 PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
             ).start()
-            Log.d("MyLog", "idForLoading prev1=${viewModel.idForLoading.value}")
+            //      Log.d("MyLog", "idForLoading prev1=${viewModel.idForLoading.value}")
             viewModel.removeCountForLoading()
-            Log.d("MyLog", "idForLoading prev2=${viewModel.idForLoading.value}")
+            //        Log.d("MyLog", "idForLoading prev2=${viewModel.idForLoading.value}")
         }
         binding.buttonNext.setOnClickListener {
             ObjectAnimator.ofPropertyValuesHolder(
@@ -61,32 +61,21 @@ class MainFragment : Fragment() {
                 PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
                 PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
             ).start()
-            Log.d("MyLog", "idForLoading next1=${viewModel.idForLoading.value}")
+            //      Log.d("MyLog", "idForLoading next1=${viewModel.idForLoading.value}")
             viewModel.addCountForLoading()
-            Log.d("MyLog", "idForLoading next2=${viewModel.idForLoading.value}")
+            //      Log.d("MyLog", "idForLoading next2=${viewModel.idForLoading.value}")
         }
 
         viewModel.idForLoading.observe(viewLifecycleOwner) {
-            if (it == -1) {
+            if (viewModel.flagSearch.value == true) {
                 return@observe
             }
             binding.buttonPrev.isEnabled = it != 0
             Log.d("MyLog", "idForLoading observe=${it}")
             binding.textCounter.text =
-                (it + 1).toString() + " - " + (it + viewModel.countForShowList).toString()
+                getString(R.string.counter_page, (it + 1).toString(), (it + viewModel.countForShowList).toString())
             viewModel.loadData()
         }
-
-//        viewModel.data.observe(viewLifecycleOwner) {
-//            val lastProduct = it?.getOrNull(viewModel.countForShowList)
-//            binding.buttonNext.isEnabled = lastProduct != null
-//            val newList: MutableList<Product> = it as MutableList<Product>
-//            newList.remove(lastProduct)
-//            //     adapter.submitList(it)
-//            adapter.submitList(newList)
-//            //    Log.d("MyLog", "data observe=${it}")
-//            Log.d("MyLog", "lastProduct=${lastProduct}")
-//        }
 
         viewModel.dataModel.observe(viewLifecycleOwner) { model ->
             model?.let {
@@ -98,13 +87,15 @@ class MainFragment : Fragment() {
                 binding.buttonNext.isEnabled = lastProduct != null
                 val newList: MutableList<Product> = model.products as MutableList<Product>
                 newList.remove(lastProduct)
-                //     adapter.submitList(it)
                 adapter.submitList(newList)
-                //    Log.d("MyLog", "data observe=${it}")
                 Log.d(
                     "MyLog",
                     "lastProduct=${lastProduct}, error=${model.error}, loading=${model.loading}, products.isEmpty=${model.products.isEmpty()}"
                 )
+
+                if (viewModel.flagSearch.value == true) {
+                    binding.groupButtonPrevNext.visibility = View.GONE
+                }
             }
         }
 
@@ -119,14 +110,17 @@ class MainFragment : Fragment() {
                         binding.editSearch.isVisible = true
                         binding.groupButtonPrevNext.visibility = View.GONE
                         binding.buttonSearch.setImageResource(R.drawable.cancel_48)
-                        viewModel.changeIdForLoading(-1)
                     }
 
                     false -> {
                         binding.editSearch.isVisible = false
                         binding.groupButtonPrevNext.visibility = View.VISIBLE
                         binding.buttonSearch.setImageResource(R.drawable.search_48)
-                        viewModel.changeIdForLoading(0)
+                        binding.textCounter.text =
+                            getString(R.string.counter_page, (viewModel.idForLoading.value?.plus(1)).toString(), (viewModel.idForLoading.value?.plus(
+                                viewModel.countForShowList
+                            )).toString())
+                        viewModel.loadData()
                     }
                 }
             }
@@ -156,9 +150,5 @@ class MainFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    companion object {
-        fun newInstance() = MainFragment()
     }
 }

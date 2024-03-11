@@ -1,4 +1,14 @@
 <resources>
-    <string name="app_name">ShowProducts</string>
-    <string name="image">Image</string>
+    <string name="app_name" translatable="false">ShowProducts</string>
+    <string name="image" translatable="false">Image</string>
+    <string name="counter_page" translatable="false">%1$s - %2$s</string>
+    <string name="brand">"Бренд: %1$s"</string>
+    <string name="cost">Цена: $%1$s</string>
+    <string name="stock">"Есть на складе: %1$d"</string>
+    <string name="prev">Предыдущие</string>
+    <string name="next">Следующие</string>
+    <string name="error_text">Что-то пошло не так... Попробуйте позже</string>
+    <string name="retry">Повторить</string>
+    <string name="image_search" translatable="false">search</string>
+    <string name="back">Назад</string>
 </resources>

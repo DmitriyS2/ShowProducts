@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="brand">Brand: %1$s</string>
+    <string name="cost">Price: $%1$s</string>
+    <string name="stock">In stock: %1$d</string>
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+    <string name="error_text">Something went wrong...Try again later</string>
+    <string name="retry">RETRY</string>
+    <string name="back">Back</string>
+</resources>
