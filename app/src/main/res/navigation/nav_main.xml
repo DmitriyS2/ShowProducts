@@ -15,6 +15,11 @@
             app:destination="@id/currentProductFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_mainFragment_to_allCategoriesFragment"
+            app:destination="@id/allCategoriesFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@anim/nav_default_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/currentProductFragment"
@@ -23,6 +28,17 @@
         tools:layout="@layout/fragment_current_product" >
         <action
             android:id="@+id/action_currentProductFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/allCategoriesFragment"
+        android:name="com.sd.showproducts.activity.AllCategoriesFragment"
+        android:label="fragment_all_categories"
+        tools:layout="@layout/fragment_all_categories" >
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_mainFragment"
             app:destination="@id/mainFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@anim/nav_default_exit_anim" />

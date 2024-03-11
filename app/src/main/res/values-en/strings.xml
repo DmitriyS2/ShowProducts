@@ -8,4 +8,5 @@
     <string name="error_text">Something went wrong...Try again later</string>
     <string name="retry">RETRY</string>
     <string name="back">Back</string>
+    <string name="choose_category">Choose a category</string>
 </resources>

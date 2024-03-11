@@ -11,4 +11,6 @@
     <string name="retry">Повторить</string>
     <string name="image_search" translatable="false">search</string>
     <string name="back">Назад</string>
+    <string name="image_filter" translatable="false">filter</string>
+    <string name="choose_category">Выбирайте категорию</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sd.showproducts.model.ModelCategories
 import com.sd.showproducts.model.ModelProducts
 import com.sd.showproducts.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,10 +16,6 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository:Repository
 ) :ViewModel() {
-
-//    private val _data:MutableLiveData<List<Product>?> = MutableLiveData()
-//    val data:LiveData<List<Product>?>
-//        get() = _data
 
     private val _dataModel:MutableLiveData<ModelProducts> = MutableLiveData()
     val dataModel:LiveData<ModelProducts>
@@ -31,14 +28,25 @@ class MainViewModel @Inject constructor(
     private val countForLoading:Int = 21
     val countForShowList:Int = 20
 
-    private val _flagSearch:MutableLiveData<Boolean> = MutableLiveData(false)
-    val flagSearch:LiveData<Boolean>
-        get() = _flagSearch
+    private val _flagFilterSearch:MutableLiveData<Int> = MutableLiveData(0)
+    val flagFilterSearch:LiveData<Int>
+        get() = _flagFilterSearch
+
+    private val _dataCategory:MutableLiveData<ModelCategories> = MutableLiveData()
+    val dataCategory:LiveData<ModelCategories>
+        get() = _dataCategory
+
+    private val _textCategory:MutableLiveData<String> = MutableLiveData("")
+    val textCategory:LiveData<String>
+        get() = _textCategory
+
+    init {
+        loadAllCategories()
+    }
 
     fun loadData() {
         viewModelScope.launch {
             try{
-         //       _data.value = repository.loadData(countForLoading, _idForLoading.value ?:0)
                 _dataModel.value = ModelProducts(loading = true)
                 _dataModel.value = ModelProducts(products = repository.loadData(countForLoading, _idForLoading.value ?:0) ?: null)
                 if(_dataModel.value?.products?.isEmpty()==true) {
@@ -47,7 +55,6 @@ class MainViewModel @Inject constructor(
             } catch (e:Exception) {
             //    e.printStackTrace()
                 Log.d("MyLog", "loadData catch e=$e")
-              //  _data.value = emptyList()
                 _dataModel.value = ModelProducts(error = true)
             }
         }
@@ -61,12 +68,6 @@ class MainViewModel @Inject constructor(
         _idForLoading.value = _idForLoading.value?.minus(countForShowList)
     }
 
-    fun changeFlagSearch() {
-        _flagSearch.value?.let {
-            _flagSearch.value = !it
-        }
-    }
-
     fun search(newText: String) {
         viewModelScope.launch {
             try{
@@ -75,7 +76,6 @@ class MainViewModel @Inject constructor(
                 if(_dataModel.value?.products?.isEmpty()==true) {
                     _dataModel.value = ModelProducts(error = true)
                 }
-            //    _data.value = repository.search(newText)
             } catch (e:Exception) {
              //   e.printStackTrace()
                 _dataModel.value = ModelProducts(error = true)
@@ -83,7 +83,44 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun changeIdForLoading(number: Int) {
-        _idForLoading.value = number
+    fun loadAllCategories() {
+        viewModelScope.launch {
+            try{
+                _dataCategory.value = ModelCategories(loading = true)
+                _dataCategory.value = ModelCategories(categories = repository.loadAllCategories())
+                if(_dataCategory.value?.categories?.isEmpty()==true) {
+                    _dataCategory.value = ModelCategories(error = true)
+                }
+            } catch (e:Exception) {
+                //    e.printStackTrace()
+                Log.d("MyLog", "loadAllCat catch e=$e")
+                _dataCategory.value = ModelCategories(error = true)
+            }
+        }
+    }
+
+    fun loadCurrentCategory(name: String) {
+        viewModelScope.launch {
+            try{
+                _dataModel.value = ModelProducts(loading = true)
+                _dataModel.value = ModelProducts(products = repository.loadCurrentCategory(name))
+                if(_dataModel.value?.products?.isEmpty()==true) {
+                    _dataModel.value = ModelProducts(error = true)
+                }
+            } catch (e:Exception) {
+                //    e.printStackTrace()
+                Log.d("MyLog", "loadCurrentCat catch e=$e")
+                _dataModel.value = ModelProducts(error = true)
+            }
+        }
+    }
+
+    fun changeTextCategory(name: String) {
+        _textCategory.value = name
+    }
+
+    fun changeFlagFilterSearch(number:Int) {
+        _flagFilterSearch.value = number
+
     }
 }

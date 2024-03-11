@@ -43,7 +43,7 @@ class CurrentProductFragment : Fragment() {
 
                     Glide.with(imageCurrent)
                         .load(it.thumbnail)
-                        .placeholder(R.drawable.download_24)
+                        .placeholder(R.drawable.download_64)
                         .error(R.drawable.error_64)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .timeout(10_000)

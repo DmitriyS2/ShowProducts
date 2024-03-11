@@ -10,10 +10,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.sd.showproducts.R
 import com.sd.showproducts.databinding.ItemProductBinding
+import com.sd.showproducts.dto.Category
 import com.sd.showproducts.dto.Product
 
 interface Listener{
     fun goToProduct(product: Product)
+    fun showCategory(category: Category)
 }
 
 class ProductAdapter(private val listener: Listener) :
@@ -31,7 +33,7 @@ class ProductAdapter(private val listener: Listener) :
 
             Glide.with(image)
                 .load(product.thumbnail)
-                .placeholder(R.drawable.download_24)
+                .placeholder(R.drawable.download_64)
                 .error(R.drawable.error_64)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .timeout(10_000)
