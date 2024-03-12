@@ -1,7 +1,5 @@
 package com.sd.showproducts.activity
 
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,7 +19,7 @@ import com.sd.showproducts.viewmodel.MainViewModel
 
 class AllCategoriesFragment : Fragment() {
 
-    private val viewModel:MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,32 +43,24 @@ class AllCategoriesFragment : Fragment() {
         binding.rwCategories.layoutManager = LinearLayoutManager(activity)
         binding.rwCategories.adapter = adapter
 
-        viewModel.dataCategory.observe(viewLifecycleOwner) {model->
+        viewModel.dataCategory.observe(viewLifecycleOwner) { model ->
             model?.let {
                 binding.groupError.isVisible = model.error
                 binding.progress.isVisible = model.loading
             }
-            val list:MutableList<Category> = model.categories.map {
+            val list: MutableList<Category> = model.categories.map {
                 Category(it)
             } as MutableList<Category>
             adapter.submitList(list)
         }
 
         binding.buttonRetryCat.setOnClickListener {
-            ObjectAnimator.ofPropertyValuesHolder(
-                binding.buttonRetryCat,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
-            ).start()
+            it.animTouch()
             viewModel.loadAllCategories()
         }
 
         binding.buttonBackCat.setOnClickListener {
-            ObjectAnimator.ofPropertyValuesHolder(
-                binding.buttonBackCat,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
-            ).start()
+            it.animTouch()
             viewModel.changeFlagFilterSearch(0)
             viewModel.changeTextCategory("")
             findNavController()

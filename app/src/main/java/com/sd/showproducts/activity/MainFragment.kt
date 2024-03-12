@@ -1,9 +1,6 @@
 package com.sd.showproducts.activity
 
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -50,19 +47,11 @@ class MainFragment : Fragment() {
         binding.rwProducts.adapter = adapter
 
         binding.buttonPrev.setOnClickListener {
-            ObjectAnimator.ofPropertyValuesHolder(
-                binding.buttonPrev,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
-            ).start()
+            it.animTouch()
             viewModel.removeCountForLoading()
         }
         binding.buttonNext.setOnClickListener {
-            ObjectAnimator.ofPropertyValuesHolder(
-                binding.buttonNext,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
-            ).start()
+            it.animTouch()
             viewModel.addCountForLoading()
         }
 
@@ -71,7 +60,6 @@ class MainFragment : Fragment() {
                 return@observe
             }
             binding.buttonPrev.isEnabled = it != 0
-            Log.d("MyLog", "idForLoading observe=${it}")
             binding.textCounter.text =
                 getString(
                     R.string.counter_page,
@@ -92,10 +80,6 @@ class MainFragment : Fragment() {
                 val newList: MutableList<Product> = model.products as MutableList<Product>
                 newList.remove(lastProduct)
                 adapter.submitList(newList)
-                Log.d(
-                    "MyLog",
-                    "lastProduct=${lastProduct}, error=${model.error}, loading=${model.loading}, products.isEmpty=${model.products.isEmpty()}"
-                )
 
                 if (viewModel.flagFilterSearch.value != 0) {
                     binding.groupButtonPrevNext.visibility = View.GONE
@@ -104,11 +88,7 @@ class MainFragment : Fragment() {
         }
 
         binding.buttonSearch.setOnClickListener {
-            ObjectAnimator.ofPropertyValuesHolder(
-                binding.buttonSearch,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
-            ).start()
+            it.animTouch()
             if (viewModel.flagFilterSearch.value == 0) {
                 viewModel.changeFlagFilterSearch(2)
             } else {
@@ -172,11 +152,7 @@ class MainFragment : Fragment() {
         }
 
         binding.buttonFilter.setOnClickListener {
-            ObjectAnimator.ofPropertyValuesHolder(
-                binding.buttonFilter,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
-            ).start()
+            it.animTouch()
             if (viewModel.flagFilterSearch.value == 0) {
                 viewModel.changeFlagFilterSearch(1)
                 findNavController()
@@ -189,11 +165,7 @@ class MainFragment : Fragment() {
         }
 
         binding.buttonRetry.setOnClickListener {
-            ObjectAnimator.ofPropertyValuesHolder(
-                binding.buttonRetry,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0F, 1.2F, 1.0F),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0F, 1.2F, 1.0F)
-            ).start()
+            it.animTouch()
             viewModel.loadData()
         }
 

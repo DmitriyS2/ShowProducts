@@ -13,7 +13,7 @@ import com.sd.showproducts.databinding.ItemProductBinding
 import com.sd.showproducts.dto.Category
 import com.sd.showproducts.dto.Product
 
-interface Listener{
+interface Listener {
     fun goToProduct(product: Product)
     fun showCategory(category: Category)
 }

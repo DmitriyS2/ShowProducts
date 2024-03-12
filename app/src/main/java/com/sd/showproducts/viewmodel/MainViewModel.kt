@@ -1,6 +1,5 @@
 package com.sd.showproducts.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,30 +13,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository:Repository
-) :ViewModel() {
+    private val repository: Repository
+) : ViewModel() {
 
-    private val _dataModel:MutableLiveData<ModelProducts> = MutableLiveData()
-    val dataModel:LiveData<ModelProducts>
+    private val _dataModel: MutableLiveData<ModelProducts> = MutableLiveData()
+    val dataModel: LiveData<ModelProducts>
         get() = _dataModel
 
-    private val _idForLoading:MutableLiveData<Int> = MutableLiveData(0)
-    val idForLoading:LiveData<Int>
+    private val _idForLoading: MutableLiveData<Int> = MutableLiveData(0)
+    val idForLoading: LiveData<Int>
         get() = _idForLoading
 
-    private val countForLoading:Int = 21
-    val countForShowList:Int = 20
+    private val countForLoading: Int = 21
+    val countForShowList: Int = 20
 
-    private val _flagFilterSearch:MutableLiveData<Int> = MutableLiveData(0)
-    val flagFilterSearch:LiveData<Int>
+    private val _flagFilterSearch: MutableLiveData<Int> = MutableLiveData(0)
+    val flagFilterSearch: LiveData<Int>
         get() = _flagFilterSearch
 
-    private val _dataCategory:MutableLiveData<ModelCategories> = MutableLiveData()
-    val dataCategory:LiveData<ModelCategories>
+    private val _dataCategory: MutableLiveData<ModelCategories> = MutableLiveData()
+    val dataCategory: LiveData<ModelCategories>
         get() = _dataCategory
 
-    private val _textCategory:MutableLiveData<String> = MutableLiveData("")
-    val textCategory:LiveData<String>
+    private val _textCategory: MutableLiveData<String> = MutableLiveData("")
+    val textCategory: LiveData<String>
         get() = _textCategory
 
     init {
@@ -46,15 +45,19 @@ class MainViewModel @Inject constructor(
 
     fun loadData() {
         viewModelScope.launch {
-            try{
+            try {
                 _dataModel.value = ModelProducts(loading = true)
-                _dataModel.value = ModelProducts(products = repository.loadData(countForLoading, _idForLoading.value ?:0) ?: null)
-                if(_dataModel.value?.products?.isEmpty()==true) {
+                _dataModel.value = ModelProducts(
+                    products = repository.loadData(
+                        countForLoading,
+                        _idForLoading.value ?: 0
+                    )
+                )
+                if (_dataModel.value?.products?.isEmpty() == true) {
                     _dataModel.value = ModelProducts(error = true)
                 }
-            } catch (e:Exception) {
-            //    e.printStackTrace()
-                Log.d("MyLog", "loadData catch e=$e")
+            } catch (e: Exception) {
+                e.printStackTrace()
                 _dataModel.value = ModelProducts(error = true)
             }
         }
@@ -70,14 +73,14 @@ class MainViewModel @Inject constructor(
 
     fun search(newText: String) {
         viewModelScope.launch {
-            try{
+            try {
                 _dataModel.value = ModelProducts(loading = true)
                 _dataModel.value = ModelProducts(products = repository.search(newText))
-                if(_dataModel.value?.products?.isEmpty()==true) {
+                if (_dataModel.value?.products?.isEmpty() == true) {
                     _dataModel.value = ModelProducts(error = true)
                 }
-            } catch (e:Exception) {
-             //   e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
                 _dataModel.value = ModelProducts(error = true)
             }
         }
@@ -85,15 +88,14 @@ class MainViewModel @Inject constructor(
 
     fun loadAllCategories() {
         viewModelScope.launch {
-            try{
+            try {
                 _dataCategory.value = ModelCategories(loading = true)
                 _dataCategory.value = ModelCategories(categories = repository.loadAllCategories())
-                if(_dataCategory.value?.categories?.isEmpty()==true) {
+                if (_dataCategory.value?.categories?.isEmpty() == true) {
                     _dataCategory.value = ModelCategories(error = true)
                 }
-            } catch (e:Exception) {
-                //    e.printStackTrace()
-                Log.d("MyLog", "loadAllCat catch e=$e")
+            } catch (e: Exception) {
+                e.printStackTrace()
                 _dataCategory.value = ModelCategories(error = true)
             }
         }
@@ -101,15 +103,14 @@ class MainViewModel @Inject constructor(
 
     fun loadCurrentCategory(name: String) {
         viewModelScope.launch {
-            try{
+            try {
                 _dataModel.value = ModelProducts(loading = true)
                 _dataModel.value = ModelProducts(products = repository.loadCurrentCategory(name))
-                if(_dataModel.value?.products?.isEmpty()==true) {
+                if (_dataModel.value?.products?.isEmpty() == true) {
                     _dataModel.value = ModelProducts(error = true)
                 }
-            } catch (e:Exception) {
-                //    e.printStackTrace()
-                Log.d("MyLog", "loadCurrentCat catch e=$e")
+            } catch (e: Exception) {
+                e.printStackTrace()
                 _dataModel.value = ModelProducts(error = true)
             }
         }
@@ -119,8 +120,7 @@ class MainViewModel @Inject constructor(
         _textCategory.value = name
     }
 
-    fun changeFlagFilterSearch(number:Int) {
+    fun changeFlagFilterSearch(number: Int) {
         _flagFilterSearch.value = number
-
     }
 }

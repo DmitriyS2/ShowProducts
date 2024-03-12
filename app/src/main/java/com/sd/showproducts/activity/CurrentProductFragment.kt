@@ -28,9 +28,9 @@ class CurrentProductFragment : Fragment() {
 
         val currentId = arguments?.textArgument?.toInt() ?: 0
 
-        viewModel.dataModel.observe(viewLifecycleOwner) {model ->
+        viewModel.dataModel.observe(viewLifecycleOwner) { model ->
             val product = model.products?.find {
-                it.id==currentId
+                it.id == currentId
             }
             product?.let {
                 binding.apply {
@@ -53,6 +53,7 @@ class CurrentProductFragment : Fragment() {
         }
 
         binding.buttonBack.setOnClickListener {
+            it.animTouch()
             findNavController()
                 .navigate(R.id.action_currentProductFragment_to_mainFragment)
         }

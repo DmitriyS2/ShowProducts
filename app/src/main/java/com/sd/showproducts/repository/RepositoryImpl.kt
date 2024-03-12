@@ -8,30 +8,32 @@ import javax.inject.Singleton
 @Singleton
 class RepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-):Repository {
+) : Repository {
 
     override suspend fun loadData(limit: Int, skip: Int): MutableList<Product> {
-        try{
+        try {
             val response = apiService.loadData(limit, skip)
             if (!response.isSuccessful) {
                 return mutableListOf()
             }
             val body = response.body()
             return body?.products ?: mutableListOf()
-        } catch (e:Exception){
+        } catch (e: Exception) {
+            e.printStackTrace()
             return mutableListOf()
         }
     }
 
     override suspend fun search(newText: String): MutableList<Product> {
-        try{
+        try {
             val response = apiService.getProductsFromSearch(newText)
             if (!response.isSuccessful) {
                 return mutableListOf()
             }
             val body = response.body()
             return body?.products ?: mutableListOf()
-        } catch (e:Exception){
+        } catch (e: Exception) {
+            e.printStackTrace()
             return mutableListOf()
         }
     }
@@ -44,19 +46,21 @@ class RepositoryImpl @Inject constructor(
             }
             return response.body() ?: mutableListOf()
         } catch (e: Exception) {
+            e.printStackTrace()
             return mutableListOf()
         }
     }
 
     override suspend fun loadCurrentCategory(name: String): MutableList<Product> {
-        try{
+        try {
             val response = apiService.loadCurrentCategory(name)
             if (!response.isSuccessful) {
                 return mutableListOf()
             }
             val body = response.body()
             return body?.products ?: mutableListOf()
-        } catch (e:Exception){
+        } catch (e: Exception) {
+            e.printStackTrace()
             return mutableListOf()
         }
     }
