@@ -1,10 +1,12 @@
 package com.sd.showproducts.activity
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -56,10 +58,11 @@ class MainFragment : Fragment() {
         }
 
         viewModel.idForLoading.observe(viewLifecycleOwner) {
+            binding.buttonPrev.isEnabled = it != 0
             if (viewModel.flagFilterSearch.value != 0) {
                 return@observe
             }
-            binding.buttonPrev.isEnabled = it != 0
+
             binding.textCounter.text =
                 getString(
                     R.string.counter_page,
@@ -98,9 +101,11 @@ class MainFragment : Fragment() {
         }
 
         binding.editSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     viewModel.search(it)
+                   binding.editSearch.clearFocus()
                 }
                 return true
             }
