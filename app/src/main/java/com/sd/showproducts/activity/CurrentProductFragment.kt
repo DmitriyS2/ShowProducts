@@ -12,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.sd.showproducts.R
 import com.sd.showproducts.databinding.FragmentCurrentProductBinding
 import com.sd.showproducts.util.StringArg
+import com.sd.showproducts.util.animTouch
 import com.sd.showproducts.viewmodel.MainViewModel
 
 class CurrentProductFragment : Fragment() {
@@ -29,7 +30,7 @@ class CurrentProductFragment : Fragment() {
         val currentId = arguments?.textArgument?.toInt() ?: 0
 
         viewModel.dataModel.observe(viewLifecycleOwner) { model ->
-            val product = model.products?.find {
+            val product = model.products.find {
                 it.id == currentId
             }
             product?.let {

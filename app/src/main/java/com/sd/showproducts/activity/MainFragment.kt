@@ -19,6 +19,7 @@ import com.sd.showproducts.adapter.ProductAdapter
 import com.sd.showproducts.databinding.FragmentMainBinding
 import com.sd.showproducts.dto.Category
 import com.sd.showproducts.dto.Product
+import com.sd.showproducts.util.animTouch
 import com.sd.showproducts.viewmodel.MainViewModel
 
 class MainFragment : Fragment() {
@@ -74,16 +75,19 @@ class MainFragment : Fragment() {
 
         viewModel.dataModel.observe(viewLifecycleOwner) { model ->
             model?.let {
-                binding.groupError.isVisible = model.error
+                binding.textNotFound.isVisible =
+                    model.error && viewModel.flagFilterSearch.value == 2
+                binding.groupError.isVisible = model.error && viewModel.flagFilterSearch.value != 2
                 binding.progress.isVisible = model.loading
                 binding.groupButtonPrevNext.isVisible = !model.error
 
-                val lastProduct = model.products?.getOrNull(viewModel.countForShowList)
+                val lastProduct = model.products.getOrNull(viewModel.countForShowList)
                 binding.buttonNext.isEnabled = lastProduct != null
-                val newList: MutableList<Product> = model.products as MutableList<Product>
-                newList.remove(lastProduct)
-                adapter.submitList(newList)
-
+                if (model.products.isNotEmpty()) {
+                    val newList: MutableList<Product> = model.products as MutableList<Product>
+                    newList.remove(lastProduct)
+                    adapter.submitList(newList)
+                } else adapter.submitList(emptyList())
                 if (viewModel.flagFilterSearch.value != 0) {
                     binding.groupButtonPrevNext.visibility = View.GONE
                 }
@@ -105,7 +109,7 @@ class MainFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     viewModel.search(it)
-                   binding.editSearch.clearFocus()
+                    binding.editSearch.clearFocus()
                 }
                 return true
             }
@@ -113,7 +117,6 @@ class MainFragment : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 return true
             }
-
         })
 
         viewModel.flagFilterSearch.observe(viewLifecycleOwner) {

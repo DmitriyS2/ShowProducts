@@ -1,5 +1,6 @@
 package com.sd.showproducts.api
 
+import com.sd.showproducts.dto.Category
 import com.sd.showproducts.dto.Products
 import retrofit2.Response
 import retrofit2.http.GET
@@ -20,7 +21,7 @@ interface ApiService {
     ): Response<Products>
 
     @GET("products/categories")
-    suspend fun loadAllCategories(): Response<MutableList<String>>
+    suspend fun loadAllCategories(): Response<List<Category>>
 
     @GET("products/category/{name}")
     suspend fun loadCurrentCategory(@Path("name") name: String): Response<Products>

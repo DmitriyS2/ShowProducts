@@ -15,6 +15,7 @@ import com.sd.showproducts.adapter.Listener
 import com.sd.showproducts.databinding.FragmentAllCategoriesBinding
 import com.sd.showproducts.dto.Category
 import com.sd.showproducts.dto.Product
+import com.sd.showproducts.util.animTouch
 import com.sd.showproducts.viewmodel.MainViewModel
 
 class AllCategoriesFragment : Fragment() {
@@ -33,8 +34,8 @@ class AllCategoriesFragment : Fragment() {
             }
 
             override fun showCategory(category: Category) {
-                viewModel.changeTextCategory(category.desc)
-                viewModel.loadCurrentCategory(category.desc)
+                viewModel.changeTextCategory(category.name)
+                viewModel.loadCurrentCategory(category.name)
                 findNavController()
                     .navigate(R.id.action_allCategoriesFragment_to_mainFragment)
             }
@@ -48,10 +49,8 @@ class AllCategoriesFragment : Fragment() {
                 binding.groupError.isVisible = model.error
                 binding.progress.isVisible = model.loading
             }
-            val list: MutableList<Category> = model.categories.map {
-                Category(it)
-            } as MutableList<Category>
-            adapter.submitList(list)
+
+            adapter.submitList(model.categories)
         }
 
         binding.buttonRetryCat.setOnClickListener {

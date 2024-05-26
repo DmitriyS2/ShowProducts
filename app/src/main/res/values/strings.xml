@@ -13,4 +13,5 @@
     <string name="back">Назад</string>
     <string name="image_filter" translatable="false">filter</string>
     <string name="choose_category">Выбирайте категорию</string>
+    <string name="not_found">Ничего не найдено</string>
 </resources>

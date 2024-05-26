@@ -20,7 +20,7 @@ class CategoryAdapter(private val listener: Listener) :
 
         fun bind(category: Category) = with(binding) {
 
-            txCatForAllCat.text = category.desc
+            txCatForAllCat.text = category.name
 
             cardViewItemCategory.setOnClickListener {
                 listener.showCategory(category)
@@ -42,7 +42,7 @@ class CategoryAdapter(private val listener: Listener) :
 
 class CategoryDiffCallback : DiffUtil.ItemCallback<Category>() {
     override fun areItemsTheSame(oldItem: Category, newItem: Category): Boolean {
-        return oldItem.desc == newItem.desc
+        return oldItem.name == newItem.name
     }
 
     override fun areContentsTheSame(oldItem: Category, newItem: Category): Boolean {

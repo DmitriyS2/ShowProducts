@@ -1,5 +1,6 @@
 package com.sd.showproducts.dto
 
 data class Category(
-    val desc: String
+    val slug:String,
+    val name: String
 )
