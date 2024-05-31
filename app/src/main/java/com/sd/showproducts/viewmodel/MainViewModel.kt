@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sd.showproducts.dto.Category
 import com.sd.showproducts.model.ModelCategories
 import com.sd.showproducts.model.ModelProducts
 import com.sd.showproducts.repository.Repository
+import com.sd.showproducts.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,8 +29,8 @@ class MainViewModel @Inject constructor(
     private val countForLoading: Int = 21
     val countForShowList: Int = 20
 
-    private val _flagFilterSearch: MutableLiveData<Int> = MutableLiveData(0)
-    val flagFilterSearch: LiveData<Int>
+    private val _flagFilterSearch = MutableLiveData(State.ALL_OFF)
+    val flagFilterSearch: LiveData<State>
         get() = _flagFilterSearch
 
     private val _dataCategory: MutableLiveData<ModelCategories> = MutableLiveData()
@@ -38,6 +40,8 @@ class MainViewModel @Inject constructor(
     private val _textCategory: MutableLiveData<String> = MutableLiveData("")
     val textCategory: LiveData<String>
         get() = _textCategory
+
+    private var currentCategory = Category()
 
     init {
         loadAllCategories()
@@ -101,11 +105,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun loadCurrentCategory(name: String) {
+    fun loadCurrentCategory() {
         viewModelScope.launch {
             try {
                 _dataModel.value = ModelProducts(loading = true)
-                _dataModel.value = ModelProducts(products = repository.loadCurrentCategory(name))
+                _dataModel.value = ModelProducts(products = repository.loadCurrentCategory(currentCategory.slug))
                 if (_dataModel.value?.products?.isEmpty() == true) {
                     _dataModel.value = ModelProducts(error = true)
                 }
@@ -120,7 +124,12 @@ class MainViewModel @Inject constructor(
         _textCategory.value = name
     }
 
-    fun changeFlagFilterSearch(number: Int) {
-        _flagFilterSearch.value = number
+    fun changeFlagFilterSearch(state: State) {
+        _flagFilterSearch.value = state
     }
+
+    fun changeCurrentCategory(category: Category) {
+        currentCategory = category
+    }
+
 }

@@ -15,6 +15,7 @@ import com.sd.showproducts.adapter.Listener
 import com.sd.showproducts.databinding.FragmentAllCategoriesBinding
 import com.sd.showproducts.dto.Category
 import com.sd.showproducts.dto.Product
+import com.sd.showproducts.util.State
 import com.sd.showproducts.util.animTouch
 import com.sd.showproducts.viewmodel.MainViewModel
 
@@ -34,8 +35,9 @@ class AllCategoriesFragment : Fragment() {
             }
 
             override fun showCategory(category: Category) {
+                viewModel.changeCurrentCategory(category)
                 viewModel.changeTextCategory(category.name)
-                viewModel.loadCurrentCategory(category.name)
+                viewModel.loadCurrentCategory()
                 findNavController()
                     .navigate(R.id.action_allCategoriesFragment_to_mainFragment)
             }
@@ -60,7 +62,7 @@ class AllCategoriesFragment : Fragment() {
 
         binding.buttonBackCat.setOnClickListener {
             it.animTouch()
-            viewModel.changeFlagFilterSearch(0)
+            viewModel.changeFlagFilterSearch(State.ALL_OFF)
             viewModel.changeTextCategory("")
             findNavController()
                 .navigate(R.id.action_allCategoriesFragment_to_mainFragment)

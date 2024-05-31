@@ -19,6 +19,7 @@ import com.sd.showproducts.adapter.ProductAdapter
 import com.sd.showproducts.databinding.FragmentMainBinding
 import com.sd.showproducts.dto.Category
 import com.sd.showproducts.dto.Product
+import com.sd.showproducts.util.State
 import com.sd.showproducts.util.animTouch
 import com.sd.showproducts.viewmodel.MainViewModel
 
@@ -60,7 +61,7 @@ class MainFragment : Fragment() {
 
         viewModel.idForLoading.observe(viewLifecycleOwner) {
             binding.buttonPrev.isEnabled = it != 0
-            if (viewModel.flagFilterSearch.value != 0) {
+            if (viewModel.flagFilterSearch.value != State.ALL_OFF) {
                 return@observe
             }
 
@@ -76,8 +77,9 @@ class MainFragment : Fragment() {
         viewModel.dataModel.observe(viewLifecycleOwner) { model ->
             model?.let {
                 binding.textNotFound.isVisible =
-                    model.error && viewModel.flagFilterSearch.value == 2
-                binding.groupError.isVisible = model.error && viewModel.flagFilterSearch.value != 2
+                    model.error && viewModel.flagFilterSearch.value == State.SEARCH_ON
+                binding.groupError.isVisible =
+                    model.error && viewModel.flagFilterSearch.value != State.SEARCH_ON
                 binding.progress.isVisible = model.loading
                 binding.groupButtonPrevNext.isVisible = !model.error
 
@@ -88,7 +90,7 @@ class MainFragment : Fragment() {
                     newList.remove(lastProduct)
                     adapter.submitList(newList)
                 } else adapter.submitList(emptyList())
-                if (viewModel.flagFilterSearch.value != 0) {
+                if (viewModel.flagFilterSearch.value != State.ALL_OFF) {
                     binding.groupButtonPrevNext.visibility = View.GONE
                 }
             }
@@ -96,10 +98,10 @@ class MainFragment : Fragment() {
 
         binding.buttonSearch.setOnClickListener {
             it.animTouch()
-            if (viewModel.flagFilterSearch.value == 0) {
-                viewModel.changeFlagFilterSearch(2)
+            if (viewModel.flagFilterSearch.value == State.ALL_OFF) {
+                viewModel.changeFlagFilterSearch(State.SEARCH_ON)
             } else {
-                viewModel.changeFlagFilterSearch(0)
+                viewModel.changeFlagFilterSearch(State.ALL_OFF)
                 viewModel.loadData()
             }
         }
@@ -120,10 +122,10 @@ class MainFragment : Fragment() {
         })
 
         viewModel.flagFilterSearch.observe(viewLifecycleOwner) {
-            it?.let { flag ->
-                when (flag) {
+            it?.let { state ->
+                when (state) {
                     //фильтр и поиск не нажаты
-                    0 -> {
+                    State.ALL_OFF -> {
                         binding.groupButtonPrevNext.isVisible = true
                         binding.groupFilter.isVisible = true
                         binding.buttonSearch.isVisible = true
@@ -140,7 +142,7 @@ class MainFragment : Fragment() {
                             )
                     }
                     //фильтр нажат
-                    1 -> {
+                    State.FILTER_ON -> {
                         binding.groupButtonPrevNext.isVisible = false
                         binding.groupFilter.isVisible = true
                         binding.buttonSearch.isVisible = false
@@ -148,7 +150,7 @@ class MainFragment : Fragment() {
                         binding.buttonFilter.setImageResource(R.drawable.cancel_48)
                     }
                     //поиск нажат
-                    2 -> {
+                    State.SEARCH_ON -> {
                         binding.groupButtonPrevNext.isVisible = false
                         binding.groupFilter.isVisible = false
                         binding.buttonSearch.isVisible = true
@@ -161,12 +163,12 @@ class MainFragment : Fragment() {
 
         binding.buttonFilter.setOnClickListener {
             it.animTouch()
-            if (viewModel.flagFilterSearch.value == 0) {
-                viewModel.changeFlagFilterSearch(1)
+            if (viewModel.flagFilterSearch.value == State.ALL_OFF) {
+                viewModel.changeFlagFilterSearch(State.FILTER_ON)
                 findNavController()
                     .navigate(R.id.action_mainFragment_to_allCategoriesFragment)
             } else {
-                viewModel.changeFlagFilterSearch(0)
+                viewModel.changeFlagFilterSearch(State.ALL_OFF)
                 viewModel.changeTextCategory("")
                 viewModel.loadData()
             }
@@ -174,7 +176,12 @@ class MainFragment : Fragment() {
 
         binding.buttonRetry.setOnClickListener {
             it.animTouch()
-            viewModel.loadData()
+            when (viewModel.flagFilterSearch.value) {
+                State.FILTER_ON -> viewModel.loadCurrentCategory()
+                else -> viewModel.loadData()
+            }
+
+
         }
 
         viewModel.textCategory.observe(viewLifecycleOwner) {
